@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产品发布 - 幻灯片演示</title>
+<style>
+  :root {
+    --color-bg: #f5f5f0;
+    --color-surface: #ffffff;
+    --color-text: #1a1a1a;
+    --color-text-secondary: #666666;
+    --color-accent: #2d2d2d;
+    --color-border: #e0e0e0;
+    --transition-duration: 0.6s;
+    --slide-radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "Helvetica Neue", "PingFang SC", "Noto Sans SC", sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* ---------- 容器：16:9 居中 ---------- */
+  .slideshow {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+    background: var(--color-surface);
+    border-radius: var(--slide-radius);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  /* ---------- Slide 通用 ---------- */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10% 12%;
+    text-align: center;
+    opacity: 0;
+    transform: translateX(60px);
+    transition:
+      opacity var(--transition-duration) ease,
+      transform var(--transition-duration) ease;
+    pointer-events: none;
+  }
+
+  .slide[data-state="active"] {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .slide[data-state="prev"] {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  .slide[data-state="next"] {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+
+  /* ---------- Slide 内容排版 ---------- */
+  .slide-tag {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .slide-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    color: var(--color-text);
+  }
+
+  .slide-desc {
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    max-width: 520px;
+  }
+
+  /* ---------- 控制栏 ---------- */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .controls button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    user-select: none;
+  }
+
+  .controls button:hover {
+    background: #f0f0f0;
+    border-color: #ccc;
+  }
+
+  .controls button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .indicator {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    min-width: 48px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- 进度条 ---------- */
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--color-accent);
+    border-radius: 0 2px 0 0;
+    transition: width var(--transition-duration) ease;
+  }
+
+  /* ---------- 移动端竖屏适配 ---------- */
+  @media (max-width: 640px) and (orientation: portrait) {
+    body { padding: 16px; }
+
+    .slideshow {
+      aspect-ratio: 3 / 4;
+      border-radius: 8px;
+    }
+
+    .slide { padding: 15% 8%; }
+
+    .controls button { padding: 8px 14px; font-size: 0.85rem; }
+  }
+
+  /* ---------- 无障碍：减弱动画 ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .slide {
+      transition: none;
+    }
+    .progress-bar {
+      transition: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="slideshow" role="region" aria-label="幻灯片演示">
+
+  <!-- Slide 1 -->
+  <section class="slide" data-state="active" aria-hidden="false">
+    <span class="slide-tag">全新发布</span>
+    <h2 class="slide-title">重新定义你的工作流</h2>
+    <p class="slide-desc">
+      我们从零开始设计了一套更简洁的交互范式，让复杂任务回归直觉操作。没有多余的菜单，没有冗长的设置，打开即用。
+    </p>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-state="next" aria-hidden="true">
+    <span class="slide-tag">核心能力</span>
+    <h2 class="slide-title">毫秒级响应，零感知延迟</h2>
+    <p class="slide-desc">
+      基于全新渲染引擎，界面刷新速度提升 3 倍。滚动、拖拽、输入——每一步操作都跟手、流畅、无断层。
+    </p>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-state="next" aria-hidden="true">
+    <span class="slide-tag">设计语言</span>
+    <h2 class="slide-title">克制的美学，恰到好处的留白</h2>
+    <p class="slide-desc">
+      视觉体系遵循信息密度与呼吸感的平衡。高对比度排版、中性色调、精确到像素的间距——让内容自己说话。
+    </p>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-state="next" aria-hidden="true">
+    <span class="slide-tag">开放生态</span>
+    <h2 class="slide-title">你的工具链，无缝接入</h2>
+    <p class="slide-desc">
+      提供标准化 API 与插件协议，支持与主流开发工具、设计软件、项目管理平台一键集成。生态开放，能力可组合。
+    </p>
+  </section>
+
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="controls">
+  <button id="btnPrev" aria-label="上一页">← 上一页</button>
+  <span class="indicator" id="indicator">1 / 4</span>
+  <button id="btnNext" aria-label="下一页">下一页 →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const indicator = document.getElementById('indicator');
+  const progressBar = document.getElementById('progressBar');
+
+  let currentIndex = 0;
+
+  function goTo(index) {
+    if (index < 0 || index >= totalSlides || index === currentIndex) return;
+
+    const direction = index > currentIndex ? 1 : -1;
+
+    slides.forEach((slide, i) => {
+      if (i === index) {
+        slide.dataset.state = 'active';
+        slide.setAttribute('aria-hidden', 'false');
+      } else if (i < index) {
+        slide.dataset.state = 'prev';
+        slide.setAttribute('aria-hidden', 'true');
+      } else {
+        slide.dataset.state = 'next';
+        slide.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    currentIndex = index;
+    updateControls();
+  }
+
+  function updateControls() {
+    indicator.textContent = (currentIndex + 1) + ' / ' + totalSlides;
+    btnPrev.disabled = currentIndex === 0;
+    btnNext.disabled = currentIndex === totalSlides - 1;
+    progressBar.style.width = ((currentIndex + 1) / totalSlides * 100) + '%';
+  }
+
+  // 按钮事件
+  btnPrev.addEventListener('click', () => goTo(currentIndex - 1));
+  btnNext.addEventListener('click', () => goTo(currentIndex + 1));
+
+  // 键盘事件
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      goTo(currentIndex - 1);
+    } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      e.preventDefault();
+      goTo(currentIndex + 1);
+    }
+  });
+
+  // 初始状态
+  updateControls();
+</script>
+
+</body>
+</html>
